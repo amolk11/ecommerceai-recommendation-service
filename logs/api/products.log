@@ -1,0 +1,5 @@
+2026-06-08 00:53:04,699 | INFO | api.products | Received recommendation request for product_id=1
+2026-06-08 00:53:06,882 | INFO | api.products | Received recommendation request for product_id=1
+2026-06-08 00:53:20,903 | INFO | api.products | Received recommendation request for product_id=10
+2026-06-08 00:53:31,833 | INFO | api.products | Received recommendation request for product_id=1
+2026-06-08 00:54:17,703 | INFO | api.products | Received recommendation request for product_id=100
