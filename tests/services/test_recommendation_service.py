@@ -1,7 +1,9 @@
 import json
+import pytest
 
 from app.services.recommendation_service import RecommendationService
 from tests.conftest import MockRecommendationRepository, MockCache
+from app.exceptions.repository import RecommendationRepositoryError
 
 
 def test_get_product_recommendations_returns_response():
@@ -103,22 +105,14 @@ class FailingRepository:
 
     def get_product_recommendations(self, product_id):
 
-        raise AssertionError(
-            "Repository should not be called"
-        )
+        raise AssertionError("Repository should not be called")
         
 
 def test_cache_hit_returns_cached_response():
 
-    service = RecommendationService(
-        repository=FailingRepository(),
-        cache=MockCacheHit(),
-    )
+    service = RecommendationService(repository=FailingRepository(), cache=MockCacheHit())
 
-    response = service.get_product_recommendations(
-        product_id=100,
-        limit=10,
-    )
+    response = service.get_product_recommendations(product_id=100, limit=10)
 
     assert response.product_id == 100
 
@@ -146,24 +140,31 @@ def test_cache_miss_stores_response():
 
     repository = MockRecommendationRepository()
 
-    service = RecommendationService(
-        repository=repository,
-        cache=cache,
-    )
+    service = RecommendationService(repository=repository, cache=cache)
 
-    service.get_product_recommendations(
-        product_id=100,
-        limit=10,
-    )
+    service.get_product_recommendations(product_id=100, limit=10)
 
     assert cache.was_set_called
 
 
 def test_build_cache_key():
 
-    key = RecommendationService._build_cache_key(
-        product_id=35,
-        limit=10,
-    )
+    key = RecommendationService._build_cache_key(product_id=35, limit=10)
 
     assert key == "recommendations:35:10"
+
+
+class FailingRepository:
+
+    def get_product_recommendations(self, product_id: int):
+
+        raise RecommendationRepositoryError("Database error")
+    
+def test_repository_error_is_raised():
+
+    service = RecommendationService(repository=FailingRepository(), cache=MockCache())
+
+    with pytest.raises(RecommendationRepositoryError):
+
+        service.get_product_recommendations(product_id=100, limit=10)
+        
