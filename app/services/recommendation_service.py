@@ -1,8 +1,6 @@
-from app.repositories.recommendation_repository import (
-    RecommendationRepository,
-)
+from app.repositories.recommendation_repository import RecommendationRepository
 
-from app.schemas.recommendation import (RecommendationInternal, RecommendationResponse,)
+from app.schemas.recommendation import (RecommendationItem, RecommendationResponse,)
 
 from app.core.logger import get_logger
 
@@ -15,13 +13,17 @@ class RecommendationService:
     def __init__(self):
         self.repository = RecommendationRepository()
 
-    def get_product_recommendations(self, product_id: int) -> RecommendationResponse:
+    def get_product_recommendations(self, product_id: int, limit: int = 20) -> RecommendationResponse:
 
-        logger.info(f"Processing recommendations for product_id={product_id}")
+        logger.info(f"Processing recommendations for product_id={product_id}, limit={limit}")
 
         recommendations = self.repository.get_product_recommendations(product_id=product_id)
+        
+        recommendations = recommendations[:limit]
+        
+        recommendation_objects = [RecommendationItem(**row) for row in recommendations]
+        
+        logger.info(f"Returning {len(recommendation_objects)} recommendations for product_id={product_id} (requested_limit={limit})")
 
-        recommendation_objects = [RecommendationInternal(**row) for row in recommendations]
-
-        return RecommendationResponse(product_id=product_id, recommendations=recommendation_objects)
+        return RecommendationResponse(product_id=product_id, recommendation_count=len(recommendation_objects), recommendations=recommendation_objects)
         

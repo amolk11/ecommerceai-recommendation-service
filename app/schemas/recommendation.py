@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
 
-class RecommendationInternal(BaseModel):
-    product_id: int
+class RecommendationItem(BaseModel):
+    product_id: int 
     recommended_product_id: int
 
     co_purchase_count: int
@@ -17,5 +17,5 @@ class RecommendationInternal(BaseModel):
 
 class RecommendationResponse(BaseModel):
     product_id: int
-    recommendations: list[RecommendationInternal]
-    
+    recommendation_count: int
+    recommendations: list[RecommendationItem]
