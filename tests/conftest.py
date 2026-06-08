@@ -26,9 +26,18 @@ class MockRecommendationRepository:
         ]
 
 
+class MockCache:
+
+    def get(self, key: str):
+        return None
+
+    def set(self, key: str, value, ttl: int):
+        pass
+    
+
 def override_recommendation_service():
 
-    return RecommendationService(repository=MockRecommendationRepository())
+    return RecommendationService(repository=MockRecommendationRepository(), cache=MockCache())
 
 
 @pytest.fixture
