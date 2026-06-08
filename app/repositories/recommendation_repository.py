@@ -1,7 +1,9 @@
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.core.database import get_engine
 from app.core.logger import get_logger
+from app.exceptions.repository import RecommendationRepositoryError
 
 
 logger = get_logger(log_name="recommendation_repository", log_folder="repositories")
@@ -29,9 +31,17 @@ class RecommendationRepository:
 
         logger.info(f"Fetching recommendations for product_id={product_id}")
 
-        with get_engine().connect() as conn:
+        try:
 
-            result = conn.execute(query, {"product_id": product_id})
+            with get_engine().connect() as conn:
+            
+                result = conn.execute(query, {"product_id": product_id})
 
-            return result.mappings().all()
+                return result.mappings().all()
+
+        except SQLAlchemyError as e:
+        
+            logger.exception(f"Failed to fetch recommendations for product_id={product_id}")
+
+            raise RecommendationRepositoryError("Failed to fetch recommendations") from e
         
