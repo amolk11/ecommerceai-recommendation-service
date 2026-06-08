@@ -1,3 +1,5 @@
+import json
+
 from app.services.recommendation_service import RecommendationService
 from tests.conftest import MockRecommendationRepository, MockCache
 
@@ -69,3 +71,99 @@ def test_empty_recommendations():
 
     assert response.recommendations == []
     
+    
+class MockCacheHit:
+
+    def get(self, key):
+
+        response = {
+            "product_id": 100,
+            "recommendation_count": 1,
+            "recommendations": [
+                {
+                    "product_id": 100,
+                    "recommended_product_id": 1,
+                    "co_purchase_count": 100,
+                    "support": 0.10,
+                    "confidence": 0.80,
+                    "lift": 2.0,
+                    "recommendation_score": 0.95,
+                    "recommendation_rank": 1,
+                }
+            ],
+        }
+
+        return json.dumps(response)
+
+    def set(self, key, value, ttl):
+        pass
+    
+    
+class FailingRepository:
+
+    def get_product_recommendations(self, product_id):
+
+        raise AssertionError(
+            "Repository should not be called"
+        )
+        
+
+def test_cache_hit_returns_cached_response():
+
+    service = RecommendationService(
+        repository=FailingRepository(),
+        cache=MockCacheHit(),
+    )
+
+    response = service.get_product_recommendations(
+        product_id=100,
+        limit=10,
+    )
+
+    assert response.product_id == 100
+
+    assert response.recommendation_count == 1
+    
+    
+class TrackingCache:
+
+    def __init__(self):
+
+        self.was_set_called = False
+
+    def get(self, key):
+
+        return None
+
+    def set(self, key, value, ttl):
+
+        self.was_set_called = True
+        
+    
+def test_cache_miss_stores_response():
+
+    cache = TrackingCache()
+
+    repository = MockRecommendationRepository()
+
+    service = RecommendationService(
+        repository=repository,
+        cache=cache,
+    )
+
+    service.get_product_recommendations(
+        product_id=100,
+        limit=10,
+    )
+
+    assert cache.was_set_called
+
+
+def test_build_cache_key():
+
+    key = RecommendationService._build_cache_key(
+        product_id=35,
+        limit=10,
+    )
+
+    assert key == "recommendations:35:10"
