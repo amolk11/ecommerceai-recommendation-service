@@ -1,7 +1,10 @@
 services:
 
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+
     container_name: recommendation-api
 
     ports:
@@ -13,6 +16,8 @@ services:
     depends_on:
       - redis
 
+    restart: unless-stopped
+
   redis:
     image: redis:7-alpine
 
@@ -20,3 +25,25 @@ services:
 
     ports:
       - "6379:6379"
+
+    restart: unless-stopped
+
+    volumes:
+      - redis_data:/data
+
+  prometheus:
+    image: prom/prometheus
+  
+    container_name: recommendation-prometheus
+  
+    ports:
+      - "9090:9090"
+  
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+  
+    depends_on:
+      - api
+
+volumes:
+  redis_data:
