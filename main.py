@@ -1,15 +1,14 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from sqlalchemy import text
 
 from app.api.v1.health import router as health_router
 from app.api.v1.products import router as products_router
 from app.core.config import settings
-from app.core.database import get_engine
 from app.core.logger import get_logger
 from app.exceptions.handlers import recommendation_repository_exception_handler
 from app.exceptions.repository import RecommendationRepositoryError
+from app.core.startup import validate_database_connection
 
 
 logger = get_logger(
@@ -24,16 +23,11 @@ async def lifespan(app: FastAPI):
     logger.info("Starting recommendation service")
 
     try:
-        with get_engine().connect() as conn:
-            conn.execute(text("SELECT 1"))
+        validate_database_connection()
 
-        logger.info("Database connection successful")
-
-    except Exception as exc:
-        logger.exception(
-            "Database connection failed"
-        )
-        raise exc
+    except Exception:
+        logger.exception("Database connection failed")
+        raise 
 
     yield
 
