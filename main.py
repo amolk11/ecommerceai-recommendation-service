@@ -8,6 +8,8 @@ from app.api.v1.products import router as products_router
 from app.core.config import settings
 from app.core.database import get_engine
 from app.core.logger import get_logger
+from app.exceptions.handlers import recommendation_repository_exception_handler
+from app.exceptions.repository import RecommendationRepositoryError
 
 
 logger = get_logger(
@@ -42,6 +44,11 @@ app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
     lifespan=lifespan,
+)
+
+app.add_exception_handler(
+    RecommendationRepositoryError,
+    recommendation_repository_exception_handler,
 )
 
 app.include_router(

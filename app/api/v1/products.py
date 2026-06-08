@@ -18,21 +18,12 @@ def get_product_recommendations(product_id: int = Path(gt=0, description="Produc
                                 ):
 
     logger.info(f"Received recommendation request for product_id={product_id} with limit={limit}")
-    try:
-        recommendations = (recommendation_service.get_product_recommendations(product_id=product_id, limit=limit))
-        
-        if not recommendations.recommendations:
-
-            logger.warning(f"No recommendations found for product_id={product_id}")
-
-            raise HTTPException(status_code=404,detail=(f"No recommendations found "
-                                                        f"for product_id={product_id}"))
-
-        return recommendations
     
-    except RecommendationRepositoryError as e:
-        
-        logger.exception(f"Internal recommendation service error for product_id={product_id}")
-
-        raise HTTPException(status_code=500, detail="Internal server error") from e
+    recommendations = (recommendation_service.get_product_recommendations(product_id=product_id, limit=limit))
+    
+    if not recommendations.recommendations:
+        logger.warning(f"No recommendations found for product_id={product_id}")
+        raise HTTPException(status_code=404,detail=f"No recommendations found "
+                                                    f"for product_id={product_id}")
+    return recommendations
  
