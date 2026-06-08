@@ -10,6 +10,7 @@ from app.exceptions.handlers import recommendation_repository_exception_handler
 from app.exceptions.repository import RecommendationRepositoryError
 from app.core.startup import validate_database_connection
 from app.middleware.request_timing import request_timing_middleware
+from app.middleware.request_id import request_id_middleware
 
 
 logger = get_logger(log_name="startup", log_folder="system")
@@ -39,6 +40,7 @@ app = FastAPI(
 )
 
 app.middleware("http")(request_timing_middleware)
+app.middleware("http")(request_id_middleware)
 
 app.add_exception_handler(
     RecommendationRepositoryError,

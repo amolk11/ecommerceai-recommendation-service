@@ -1,4 +1,4 @@
-import time
+import uuid
 
 from fastapi import Request
 
@@ -8,14 +8,16 @@ from app.core.logger import get_logger
 logger = get_logger(log_name="request_id", log_folder="middleware")
 
 
-async def request_timing_middleware(request: Request, call_next):
+async def request_id_middleware(request: Request, call_next):
 
-    start_time = time.perf_counter()
+    request_id = uuid.uuid4().hex[:8]
+
+    request.state.request_id = request_id
 
     response = await call_next(request)
 
-    duration_ms = (time.perf_counter() - start_time) * 1000
+    response.headers["X-Request-ID"] = request_id
 
-    logger.info(f"{request.method} {request.url.path} status={response.status_code} duration_ms={duration_ms:.2f}")
+    logger.info(f"request_id={request_id} method={request.method} path={request.url.path}")
 
     return response
