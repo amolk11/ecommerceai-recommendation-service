@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from app.api.v1.health import router as health_router
 from app.api.v1.products import router as products_router
+from app.api.v1.metrics import router as metrics_router
 from app.core.config import settings
 from app.core.logger import get_logger
 from app.exceptions.handlers import recommendation_repository_exception_handler
@@ -11,7 +12,6 @@ from app.exceptions.repository import RecommendationRepositoryError
 from app.core.startup import validate_database_connection
 from app.middleware.request_timing import request_timing_middleware
 from app.middleware.request_id import request_id_middleware
-
 
 logger = get_logger(log_name="startup", log_folder="system")
 
@@ -56,4 +56,8 @@ app.include_router(
 app.include_router(
     products_router,
     prefix="/api/v1",
+)
+
+app.include_router(
+    metrics_router,
 )
