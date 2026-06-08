@@ -9,12 +9,10 @@ from app.core.logger import get_logger
 from app.exceptions.handlers import recommendation_repository_exception_handler
 from app.exceptions.repository import RecommendationRepositoryError
 from app.core.startup import validate_database_connection
+from app.middleware.request_timing import request_timing_middleware
 
 
-logger = get_logger(
-    log_name="startup",
-    log_folder="system"
-)
+logger = get_logger(log_name="startup", log_folder="system")
 
 
 @asynccontextmanager
@@ -39,6 +37,8 @@ app = FastAPI(
     version=settings.app_version,
     lifespan=lifespan,
 )
+
+app.middleware("http")(request_timing_middleware)
 
 app.add_exception_handler(
     RecommendationRepositoryError,

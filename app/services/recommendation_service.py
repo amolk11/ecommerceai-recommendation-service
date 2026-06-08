@@ -4,7 +4,6 @@ from app.repositories.recommendation_repository import RecommendationRepository
 from app.exceptions.repository import RecommendationRepositoryError
 from app.schemas.recommendation import (RecommendationItem, RecommendationResponse,)
 from app.core.logger import get_logger
-from app.repositories.recommendation_repository import RecommendationRepository
 from app.cache.redis_cache import RedisCache
 from app.core.config import settings
 
@@ -29,10 +28,14 @@ class RecommendationService:
         if cached_response:
 
             logger.info(f"Cache hit for key={cache_key}")
+            
+            logger.info(f"Serving recommendations from Redis cache for product_id={product_id}")
 
             return RecommendationResponse(**json.loads(cached_response))
 
         logger.info(f"Cache miss for key={cache_key}")
+        
+        logger.info(f"Fetching recommendations from PostgreSQL for product_id={product_id}")
 
         try:
             recommendations = self.repository.get_product_recommendations(product_id=product_id)
