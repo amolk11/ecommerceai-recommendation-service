@@ -5,10 +5,8 @@ from app.services.recommendation_service import RecommendationService
 
 from main import app
 
-client = TestClient(app)
 
-
-def test_health_endpoint():
+def test_health_endpoint(client):
 
     response = client.get("/api/v1/health")
 
@@ -41,11 +39,9 @@ def override_recommendation_service():
 app.dependency_overrides[get_recommendation_service] = override_recommendation_service
 
 
-def test_get_recommendations():
+def test_get_recommendations(client):
 
-    response = client.get(
-        "/api/v1/products/100/recommendations"
-    )
+    response = client.get("/api/v1/products/100/recommendations")
 
     assert response.status_code == 200
 
@@ -58,14 +54,14 @@ def test_get_recommendations():
     assert len(data["recommendations"]) == 1
     
     
-def test_invalid_product_id():
+def test_invalid_product_id(client):
 
     response = client.get("/api/v1/products/-1/recommendations")
 
     assert response.status_code == 422
     
     
-def test_invalid_limit():
+def test_invalid_limit(client):
 
     response = client.get("/api/v1/products/100/recommendations?limit=100")
 

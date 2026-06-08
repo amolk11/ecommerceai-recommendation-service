@@ -1,6 +1,4 @@
-from app.services.recommendation_service import (
-    RecommendationService,
-)
+from app.services.recommendation_service import RecommendationService
 
 
 class MockRecommendationRepository:
