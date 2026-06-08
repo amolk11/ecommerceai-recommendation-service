@@ -2,6 +2,7 @@ from app.repositories.recommendation_repository import RecommendationRepository
 from app.exceptions.repository import RecommendationRepositoryError
 from app.schemas.recommendation import (RecommendationItem, RecommendationResponse,)
 from app.core.logger import get_logger
+from app.repositories.recommendation_repository import RecommendationRepository
 
 
 logger = get_logger(log_name="recommendation_service", log_folder="services")
@@ -9,8 +10,8 @@ logger = get_logger(log_name="recommendation_service", log_folder="services")
 
 class RecommendationService:
 
-    def __init__(self):
-        self.repository = RecommendationRepository()
+    def __init__(self, repository: RecommendationRepository):
+        self.repository = repository
 
     def get_product_recommendations(self, product_id: int, limit: int = 20) -> RecommendationResponse:
 
