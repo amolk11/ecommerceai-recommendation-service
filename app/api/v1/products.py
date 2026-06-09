@@ -25,5 +25,8 @@ def get_product_recommendations(product_id: int = Path(gt=0, description="Produc
         logger.warning(f"No recommendations found for product_id={product_id}")
         raise HTTPException(status_code=404,detail=f"No recommendations found "
                                                     f"for product_id={product_id}")
+    
+    logger.info(f"Returning recommendations for product_id={product_id}, count={recommendations.recommendation_count}, limit={limit}")
+    
     return recommendations
  

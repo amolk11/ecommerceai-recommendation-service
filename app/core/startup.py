@@ -2,11 +2,9 @@ from sqlalchemy import text
 
 from app.core.database import get_engine
 from app.core.logger import get_logger
+from app.cache.redis_cache import RedisCache
 
-logger = get_logger(
-    log_name="startup",
-    log_folder="system",
-)
+logger = get_logger(log_name="startup", log_folder="system")
 
 
 def validate_database_connection() -> None:
@@ -18,4 +16,17 @@ def validate_database_connection() -> None:
         conn.execute(text("SELECT 1"))
 
     logger.info("Database connection successful")
+    
+    
+def validate_redis_connection() -> None:
+    """
+    Validate Redis connectivity during application startup.
+    """
+
+    cache = RedisCache()
+
+    if not cache.ping():
+        raise RuntimeError("Redis connection failed")
+
+    logger.info("Redis connection successful")
     

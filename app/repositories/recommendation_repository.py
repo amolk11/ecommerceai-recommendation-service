@@ -1,3 +1,5 @@
+import time
+
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -32,11 +34,16 @@ class RecommendationRepository:
         logger.info(f"Fetching recommendations for product_id={product_id}")
 
         try:
-
+            start = time.perf_counter()
+            
             with get_engine().connect() as conn:
             
                 result = conn.execute(query, {"product_id": product_id})
-
+                
+                db_time = time.perf_counter() - start
+                
+                logger.info(f"PostgreSQL query took {db_time:.3f}s")
+                
                 return result.mappings().all()
 
         except SQLAlchemyError as e:

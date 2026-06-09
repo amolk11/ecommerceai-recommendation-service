@@ -9,7 +9,7 @@ from app.core.config import settings
 from app.core.logger import get_logger
 from app.exceptions.handlers import recommendation_repository_exception_handler
 from app.exceptions.repository import RecommendationRepositoryError
-from app.core.startup import validate_database_connection
+from app.core.startup import validate_database_connection, validate_redis_connection
 from app.middleware.request_timing import request_timing_middleware
 from app.middleware.request_id import request_id_middleware
 
@@ -23,6 +23,7 @@ async def lifespan(app: FastAPI):
 
     try:
         validate_database_connection()
+        validate_redis_connection()
 
     except Exception:
         logger.exception("Database connection failed")

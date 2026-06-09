@@ -13,8 +13,6 @@ from app.metrics.metrics import REQUEST_COUNT, CACHE_HITS, CACHE_MISSES, REQUEST
 logger = get_logger(log_name="recommendation_service", log_folder="services")
 
 
-
-
 class RecommendationService:
     
     def __init__(self, repository: RecommendationRepository, cache: RedisCache):

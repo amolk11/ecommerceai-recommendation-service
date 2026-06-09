@@ -6,16 +6,12 @@ class Settings(BaseSettings):
     app_version: str
     environment: str
     
-    db_user: str
-    db_password: str
-    db_host: str
-    db_port: int
-    db_name: str
+    db_url: str
     
     redis_host: str 
     redis_port: int 
     cache_ttl: int 
-
+    
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore",
