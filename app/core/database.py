@@ -13,26 +13,8 @@ ecommerce_engine: Engine = create_engine(
     pool_recycle=1800,
 )
 
-
-# Platform Database
-platform_engine: Engine = create_engine(
-    settings.platform_db_url,
-    pool_pre_ping=True,
-    pool_size=5,
-    max_overflow=10,
-    pool_recycle=1800,
-)
-
-
 def get_engine() -> Engine:
     """
     Return the ecommerce database engine.
     """
     return ecommerce_engine
-
-
-def get_platform_engine() -> Engine:
-    """
-    Return the platform database engine.
-    """
-    return platform_engine

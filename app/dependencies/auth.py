@@ -1,8 +1,7 @@
 from fastapi import Header, HTTPException, status
 
 from platform_core.auth import validate_api_key
-
-from app.core.database import get_platform_engine
+from platform_core.database import get_platform_engine
 
 from app.metrics.metrics import (
     AUTH_REQUESTS_TOTAL,
@@ -12,12 +11,12 @@ from app.metrics.metrics import (
 )
 
 
-def get_current_client(
-    x_api_key: str | None = Header(default=None, alias="X-API-Key")) -> dict:
-
+def get_current_client(x_api_key: str | None = Header(default=None, alias="X-API-Key")) -> dict:
+    print(f"HEADER RECEIVED: {repr(x_api_key)}")
     AUTH_REQUESTS_TOTAL.inc()
 
     if not x_api_key:
+        print("NO API KEY RECEIVED")
 
         AUTH_MISSING_API_KEY_TOTAL.inc()
 
@@ -26,8 +25,10 @@ def get_current_client(
     engine = get_platform_engine()
 
     with engine.connect() as connection:
+        print("VALIDATING API KEY...")
         client = validate_api_key(connection=connection, api_key=x_api_key)
-
+        print(f"CLIENT RESULT: {client}")
+        
     if client is None:
 
         AUTH_INVALID_API_KEY_TOTAL.inc()
