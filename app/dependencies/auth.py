@@ -18,8 +18,7 @@ def get_current_client(
     AUTH_REQUESTS_TOTAL.inc()
 
     if not x_api_key:
-        print("NO API KEY RECEIVED")
-
+        
         AUTH_MISSING_API_KEY_TOTAL.inc()
 
         raise HTTPException(
