@@ -1,5 +1,4 @@
 from fastapi import Request
-from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 
 from app.core.logger import get_logger

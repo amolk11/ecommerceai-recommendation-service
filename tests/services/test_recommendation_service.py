@@ -153,12 +153,6 @@ def test_build_cache_key():
 
     assert key == "recommendations:35:10"
 
-
-class FailingRepository:
-
-    def get_product_recommendations(self, product_id: int):
-
-        raise RecommendationRepositoryError("Database error")
     
 def test_repository_error_is_raised():
 

@@ -1,10 +1,3 @@
-from fastapi.testclient import TestClient
-
-from app.dependencies.recommendation import get_recommendation_service
-from app.services.recommendation_service import RecommendationService
-
-from main import app
-
 
 def test_health_endpoint(client):
 

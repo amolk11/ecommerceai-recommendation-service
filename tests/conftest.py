@@ -1,5 +1,4 @@
 import pytest
-import json
 
 from fastapi.testclient import TestClient
 
@@ -8,7 +7,6 @@ from main import app
 from app.dependencies.recommendation import get_recommendation_service
 from app.dependencies.auth import get_current_client
 from app.services.recommendation_service import RecommendationService
-from app.schemas.recommendation import RecommendationResponse
 
 class MockRecommendationRepository:
 
