@@ -1,12 +1,12 @@
-from sqlalchemy import create_engine, URL
+from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 
 from app.core.config import settings
 
-DATABASE_URL = settings.db_url
 
-engine: Engine = create_engine(
-    DATABASE_URL,
+# Ecommerce Database
+ecommerce_engine: Engine = create_engine(
+    settings.db_url,
     pool_pre_ping=True,
     pool_size=10,
     max_overflow=20,
@@ -14,9 +14,25 @@ engine: Engine = create_engine(
 )
 
 
+# Platform Database
+platform_engine: Engine = create_engine(
+    settings.platform_db_url,
+    pool_pre_ping=True,
+    pool_size=5,
+    max_overflow=10,
+    pool_recycle=1800,
+)
+
+
 def get_engine() -> Engine:
     """
-    Return the application database engine.
+    Return the ecommerce database engine.
     """
+    return ecommerce_engine
 
-    return engine
+
+def get_platform_engine() -> Engine:
+    """
+    Return the platform database engine.
+    """
+    return platform_engine
