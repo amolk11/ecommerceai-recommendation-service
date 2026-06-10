@@ -1,13 +1,13 @@
-def test_health_endpoint(client):
+def test_health_endpoint(authenticated_client):
 
-    response = client.get("/api/v1/health")
+    response = authenticated_client.get("/api/v1/health")
 
     assert response.status_code == 200
 
 
-def test_get_recommendations(client):
+def test_get_recommendations(authenticated_client):
 
-    response = client.get("/api/v1/products/100/recommendations")
+    response = authenticated_client.get("/api/v1/products/100/recommendations")
 
     assert response.status_code == 200
 
@@ -20,15 +20,15 @@ def test_get_recommendations(client):
     assert len(data["recommendations"]) == 1
 
 
-def test_invalid_product_id(client):
+def test_invalid_product_id(authenticated_client):
 
-    response = client.get("/api/v1/products/-1/recommendations")
+    response = authenticated_client.get("/api/v1/products/-1/recommendations")
 
     assert response.status_code == 422
 
 
-def test_invalid_limit(client):
+def test_invalid_limit(authenticated_client):
 
-    response = client.get("/api/v1/products/100/recommendations?limit=100")
+    response = authenticated_client.get("/api/v1/products/100/recommendations?limit=100")
 
     assert response.status_code == 422
