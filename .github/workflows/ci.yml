@@ -39,6 +39,10 @@ jobs:
       - name: Run Ruff Lint
         run: |
           python -m ruff check .
+      
+      - name: Ruff Version
+        run: |
+          python -m ruff --version
 
       - name: Run Ruff Format Check
         run: |
