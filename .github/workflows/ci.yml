@@ -117,4 +117,4 @@ jobs:
           docker run \
             --rm \
             ecommerceai-recommendation-service:latest \
-            python -c "from app.main import app; print('Application startup successful')"
+            python -c "from main import app; print('Application startup successful')"
