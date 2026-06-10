@@ -60,11 +60,12 @@ def client():
 @pytest.fixture
 def authenticated_client():
 
-    app.dependency_overrides[get_recommendation_service] = (override_recommendation_service)
+    app.dependency_overrides[get_recommendation_service] = (
+        override_recommendation_service
+    )
 
-    app.dependency_overrides[get_current_client] = (override_get_current_client)
+    app.dependency_overrides[get_current_client] = override_get_current_client
 
     yield TestClient(app)
 
     app.dependency_overrides.clear()
-    

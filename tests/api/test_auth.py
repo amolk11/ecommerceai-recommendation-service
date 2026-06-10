@@ -37,4 +37,3 @@ def test_authenticated_request_returns_200(authenticated_client):
     assert "product_id" in response_body
     assert "recommendations" in response_body
     assert "recommendation_count" in response_body
-    

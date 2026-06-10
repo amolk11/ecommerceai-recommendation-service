@@ -25,9 +25,12 @@ async def lifespan(app: FastAPI):
     logger.info("Starting recommendation service")
 
     try:
-        validate_database_connection()
-        validate_redis_connection()
-        validate_platform_infrastructure()
+        if settings.environment == "test":
+            logger.info("Skipping infrastructure validation in test environment")
+        else:
+            validate_database_connection()
+            validate_redis_connection()
+            validate_platform_infrastructure()
 
     except Exception:
         logger.exception("Database connection failed")

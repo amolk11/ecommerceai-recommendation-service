@@ -29,6 +29,8 @@ def test_invalid_product_id(authenticated_client):
 
 def test_invalid_limit(authenticated_client):
 
-    response = authenticated_client.get("/api/v1/products/100/recommendations?limit=100")
+    response = authenticated_client.get(
+        "/api/v1/products/100/recommendations?limit=100"
+    )
 
     assert response.status_code == 422
