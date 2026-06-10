@@ -13,6 +13,9 @@ from app.core.startup import validate_database_connection, validate_redis_connec
 from app.middleware.request_timing import request_timing_middleware
 from app.middleware.request_id import request_id_middleware
 
+from platform_core.validation import validate_platform_infrastructure
+
+
 logger = get_logger(log_name="startup", log_folder="system")
 
 
@@ -24,6 +27,7 @@ async def lifespan(app: FastAPI):
     try:
         validate_database_connection()
         validate_redis_connection()
+        validate_platform_infrastructure()
 
     except Exception:
         logger.exception("Database connection failed")
