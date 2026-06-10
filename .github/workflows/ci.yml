@@ -52,6 +52,19 @@ jobs:
     env:
       PYTHONPATH: .
 
+      APP_NAME: ecommerceai-recommendation-service
+      APP_VERSION: 0.1.0
+      ENVIRONMENT: test
+
+      DB_URL: ${{ secrets.DB_URL }}
+      PLATFORM_DB_URL: ${{ secrets.PLATFORM_DB_URL }}
+
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      CACHE_TTL: 3600
+
+      TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
