@@ -13,32 +13,6 @@ def test_health_endpoint(client):
     assert response.status_code == 200
     
 
-class MockRecommendationRepository:
-
-    def get_product_recommendations(self, product_id: int):
-
-        return [
-            {
-                "product_id": product_id,
-                "recommended_product_id": 1,
-                "co_purchase_count": 100,
-                "support": 0.10,
-                "confidence": 0.80,
-                "lift": 2.0,
-                "recommendation_score": 0.95,
-                "recommendation_rank": 1,
-            }
-        ]
-        
-        
-def override_recommendation_service():
-
-    return RecommendationService(repository=MockRecommendationRepository())
-
-
-app.dependency_overrides[get_recommendation_service] = override_recommendation_service
-
-
 def test_get_recommendations(client):
 
     response = client.get("/api/v1/products/100/recommendations")

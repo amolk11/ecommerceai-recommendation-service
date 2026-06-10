@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from main import app
 
 from app.dependencies.recommendation import get_recommendation_service
+from app.dependencies.auth import get_current_client
 from app.services.recommendation_service import RecommendationService
 from app.schemas.recommendation import RecommendationResponse
 
@@ -41,10 +42,16 @@ def override_recommendation_service():
     return RecommendationService(repository=MockRecommendationRepository(), cache=MockCache())
 
 
+def override_get_current_client():
+    return {"client_id": 1, "client_name": "test-client", "is_active": True}
+    
+    
 @pytest.fixture
 def client():
 
     app.dependency_overrides[get_recommendation_service] = override_recommendation_service
+
+    app.dependency_overrides[get_current_client] = override_get_current_client
 
     yield TestClient(app)
 
