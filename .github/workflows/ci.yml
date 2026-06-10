@@ -119,10 +119,10 @@ jobs:
             -e APP_NAME=ecommerceai-recommendation-service \
             -e APP_VERSION=0.1.0 \
             -e ENVIRONMENT=test \
-            -e DB_URL=postgresql://user:password@localhost:5432/testdb \
+            -e DB_URL=postgresql+psycopg://user:password@localhost:5432/testdb \
             -e REDIS_HOST=localhost \
             -e REDIS_PORT=6379 \
-            -e PLATFORM_DB_URL=postgresql://user:password@localhost:5432/platform \
+            -e PLATFORM_DB_URL=postgresql+psycopg://user:password@localhost:5432/platform \
             -e CACHE_TTL=3600 \
             ecommerceai-recommendation-service:latest \
             python -c "from main import app; print('Application startup successful')"
