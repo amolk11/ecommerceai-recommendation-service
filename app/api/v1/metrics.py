@@ -10,4 +10,3 @@ router = APIRouter(tags=["Metrics"])
 def metrics():
 
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
-    

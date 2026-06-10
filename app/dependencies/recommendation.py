@@ -7,7 +7,9 @@ from app.dependencies.cache import get_cache
 from app.cache.redis_cache import RedisCache
 
 
-def get_recommendation_service(repository: RecommendationRepository = Depends(get_recommendation_repository), 
-                               cache: RedisCache = Depends(get_cache)) -> RecommendationService:
+def get_recommendation_service(
+    repository: RecommendationRepository = Depends(get_recommendation_repository),
+    cache: RedisCache = Depends(get_cache),
+) -> RecommendationService:
 
     return RecommendationService(repository=repository, cache=cache)

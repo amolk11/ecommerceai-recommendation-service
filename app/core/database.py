@@ -13,6 +13,7 @@ ecommerce_engine: Engine = create_engine(
     pool_recycle=1800,
 )
 
+
 def get_engine() -> Engine:
     """
     Return the ecommerce database engine.

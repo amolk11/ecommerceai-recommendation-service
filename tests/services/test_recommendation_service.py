@@ -19,11 +19,10 @@ def test_get_product_recommendations_returns_response():
     assert response.recommendation_count == 1
 
     assert len(response.recommendations) == 1
-    
-    
-class MockRecommendationRepositoryMany:
 
-    def get_product_recommendations(self,product_id: int):
+
+class MockRecommendationRepositoryMany:
+    def get_product_recommendations(self, product_id: int):
 
         return [
             {
@@ -38,7 +37,7 @@ class MockRecommendationRepositoryMany:
             }
             for i in range(1, 6)
         ]
-        
+
 
 def test_limit_is_applied():
 
@@ -51,10 +50,9 @@ def test_limit_is_applied():
     assert response.recommendation_count == 3
 
     assert len(response.recommendations) == 3
-    
-    
-class MockEmptyRecommendationRepository:
 
+
+class MockEmptyRecommendationRepository:
     def get_product_recommendations(self, product_id: int):
         return []
 
@@ -72,10 +70,9 @@ def test_empty_recommendations():
     assert response.recommendation_count == 0
 
     assert response.recommendations == []
-    
-    
-class MockCacheHit:
 
+
+class MockCacheHit:
     def get(self, key):
 
         response = {
@@ -99,28 +96,28 @@ class MockCacheHit:
 
     def set(self, key, value, ttl):
         pass
-    
-    
-class FailingRepository:
 
+
+class FailingRepository:
     def get_product_recommendations(self, product_id):
 
         raise AssertionError("Repository should not be called")
-        
+
 
 def test_cache_hit_returns_cached_response():
 
-    service = RecommendationService(repository=FailingRepository(), cache=MockCacheHit())
+    service = RecommendationService(
+        repository=FailingRepository(), cache=MockCacheHit()
+    )
 
     response = service.get_product_recommendations(product_id=100, limit=10)
 
     assert response.product_id == 100
 
     assert response.recommendation_count == 1
-    
-    
-class TrackingCache:
 
+
+class TrackingCache:
     def __init__(self):
 
         self.was_set_called = False
@@ -132,8 +129,8 @@ class TrackingCache:
     def set(self, key, value, ttl):
 
         self.was_set_called = True
-        
-    
+
+
 def test_cache_miss_stores_response():
 
     cache = TrackingCache()
@@ -153,12 +150,10 @@ def test_build_cache_key():
 
     assert key == "recommendations:35:10"
 
-    
+
 def test_repository_error_is_raised():
 
     service = RecommendationService(repository=FailingRepository(), cache=MockCache())
 
     with pytest.raises(RecommendationRepositoryError):
-
         service.get_product_recommendations(product_id=100, limit=10)
-        

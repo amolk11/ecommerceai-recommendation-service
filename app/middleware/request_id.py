@@ -18,6 +18,8 @@ async def request_id_middleware(request: Request, call_next):
 
     response.headers["X-Request-ID"] = request_id
 
-    logger.info(f"request_id={request_id} method={request.method} path={request.url.path}")
+    logger.info(
+        f"request_id={request_id} method={request.method} path={request.url.path}"
+    )
 
     return response

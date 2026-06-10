@@ -4,4 +4,3 @@ class RepositoryError(Exception):
 
 class RecommendationRepositoryError(RepositoryError):
     """Recommendation repository exception."""
-    

@@ -7,8 +7,10 @@ from app.exceptions.repository import RecommendationRepositoryError
 logger = get_logger(log_name="exception_handlers", log_folder="system")
 
 
-async def recommendation_repository_exception_handler(request: Request, exc: RecommendationRepositoryError) -> JSONResponse:
+async def recommendation_repository_exception_handler(
+    request: Request, exc: RecommendationRepositoryError
+) -> JSONResponse:
 
     logger.exception(f"Repository error while processing request: {request.url.path}")
 
-    return JSONResponse(status_code=500,content={"detail": "Internal server error"})
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})

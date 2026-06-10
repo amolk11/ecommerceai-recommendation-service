@@ -16,8 +16,8 @@ def validate_database_connection() -> None:
         conn.execute(text("SELECT 1"))
 
     logger.info("Database connection successful")
-    
-    
+
+
 def validate_redis_connection() -> None:
     """
     Validate Redis connectivity during application startup.
@@ -29,4 +29,3 @@ def validate_redis_connection() -> None:
         raise RuntimeError("Redis connection failed")
 
     logger.info("Redis connection successful")
-    

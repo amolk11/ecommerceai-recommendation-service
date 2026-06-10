@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class RecommendationItem(BaseModel):
-    product_id: int 
+    product_id: int
     recommended_product_id: int
 
     co_purchase_count: int

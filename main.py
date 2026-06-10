@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
 
     except Exception:
         logger.exception("Database connection failed")
-        raise 
+        raise
 
     yield
 

@@ -15,9 +15,11 @@ async def request_timing_middleware(request: Request, call_next):
     response = await call_next(request)
 
     duration_ms = (time.perf_counter() - start_time) * 1000
-    
-    response.headers["X-Process-Time"] = (f"{duration_ms:.2f}ms")
 
-    logger.info(f"{request.method} {request.url.path} status={response.status_code} duration_ms={duration_ms:.2f}")
+    response.headers["X-Process-Time"] = f"{duration_ms:.2f}ms"
+
+    logger.info(
+        f"{request.method} {request.url.path} status={response.status_code} duration_ms={duration_ms:.2f}"
+    )
 
     return response

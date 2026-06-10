@@ -11,7 +11,9 @@ from app.metrics.metrics import (
 )
 
 
-def get_current_client(x_api_key: str | None = Header(default=None, alias="X-API-Key")) -> dict:
+def get_current_client(
+    x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+) -> dict:
     print(f"HEADER RECEIVED: {repr(x_api_key)}")
     AUTH_REQUESTS_TOTAL.inc()
 
@@ -20,7 +22,9 @@ def get_current_client(x_api_key: str | None = Header(default=None, alias="X-API
 
         AUTH_MISSING_API_KEY_TOTAL.inc()
 
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="API key is required")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="API key is required"
+        )
 
     engine = get_platform_engine()
 
@@ -28,13 +32,13 @@ def get_current_client(x_api_key: str | None = Header(default=None, alias="X-API
         print("VALIDATING API KEY...")
         client = validate_api_key(connection=connection, api_key=x_api_key)
         print(f"CLIENT RESULT: {client}")
-        
-    if client is None:
 
+    if client is None:
         AUTH_INVALID_API_KEY_TOTAL.inc()
 
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key"
+        )
 
     AUTH_SUCCESS_TOTAL.inc()
 

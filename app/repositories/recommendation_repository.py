@@ -12,7 +12,6 @@ logger = get_logger(log_name="recommendation_repository", log_folder="repositori
 
 
 class RecommendationRepository:
-
     @staticmethod
     def get_product_recommendations(product_id: int) -> list[dict]:
 
@@ -35,20 +34,21 @@ class RecommendationRepository:
 
         try:
             start = time.perf_counter()
-            
+
             with get_engine().connect() as conn:
-            
                 result = conn.execute(query, {"product_id": product_id})
-                
+
                 db_time = time.perf_counter() - start
-                
+
                 logger.info(f"PostgreSQL query took {db_time:.3f}s")
-                
+
                 return result.mappings().all()
 
         except SQLAlchemyError as e:
-        
-            logger.exception(f"Failed to fetch recommendations for product_id={product_id}")
+            logger.exception(
+                f"Failed to fetch recommendations for product_id={product_id}"
+            )
 
-            raise RecommendationRepositoryError("Failed to fetch recommendations") from e
-        
+            raise RecommendationRepositoryError(
+                "Failed to fetch recommendations"
+            ) from e

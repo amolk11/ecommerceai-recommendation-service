@@ -8,8 +8,8 @@ def test_repository_returns_list():
     result = repository.get_product_recommendations(product_id=35)
 
     assert isinstance(result, list)
-    
-    
+
+
 def test_repository_returns_expected_columns():
 
     repository = RecommendationRepository()
@@ -28,8 +28,8 @@ def test_repository_returns_expected_columns():
     assert "lift" in row
     assert "recommendation_score" in row
     assert "recommendation_rank" in row
-    
-    
+
+
 def test_repository_returns_empty_list_for_unknown_product():
 
     repository = RecommendationRepository()
@@ -37,8 +37,8 @@ def test_repository_returns_empty_list_for_unknown_product():
     result = repository.get_product_recommendations(product_id=22)
 
     assert result == []
-    
-    
+
+
 def test_repository_returns_ranked_results():
 
     repository = RecommendationRepository()

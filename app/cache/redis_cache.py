@@ -9,9 +9,8 @@ logger = get_logger(log_name="redis_cache", log_folder="cache")
 
 
 class RedisCache(CacheManager):
-
     def __init__(self):
-        
+
         self.client = redis.Redis(
             host=settings.redis_host,
             port=settings.redis_port,
@@ -41,4 +40,3 @@ class RedisCache(CacheManager):
         except redis.RedisError:
             logger.exception("Redis ping failed")
             return False
-        

@@ -8,8 +8,8 @@ from app.dependencies.recommendation import get_recommendation_service
 from app.dependencies.auth import get_current_client
 from app.services.recommendation_service import RecommendationService
 
-class MockRecommendationRepository:
 
+class MockRecommendationRepository:
     def get_product_recommendations(self, product_id: int):
 
         return [
@@ -27,31 +27,33 @@ class MockRecommendationRepository:
 
 
 class MockCache:
-
     def get(self, key: str):
         return None
 
     def set(self, key: str, value, ttl: int):
         pass
-    
+
 
 def override_recommendation_service():
 
-    return RecommendationService(repository=MockRecommendationRepository(), cache=MockCache())
+    return RecommendationService(
+        repository=MockRecommendationRepository(), cache=MockCache()
+    )
 
 
 def override_get_current_client():
     return {"client_id": 1, "client_name": "test-client", "is_active": True}
-    
-    
+
+
 @pytest.fixture
 def client():
 
-    app.dependency_overrides[get_recommendation_service] = override_recommendation_service
+    app.dependency_overrides[get_recommendation_service] = (
+        override_recommendation_service
+    )
 
     app.dependency_overrides[get_current_client] = override_get_current_client
 
     yield TestClient(app)
 
     app.dependency_overrides.clear()
-    
