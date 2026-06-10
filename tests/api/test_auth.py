@@ -1,3 +1,6 @@
+from unittest.mock import Mock, patch
+
+
 def test_missing_api_key_returns_401(client):
     """
     Verify requests without API key are rejected.
@@ -9,10 +12,19 @@ def test_missing_api_key_returns_401(client):
     assert response.json()["detail"] == "API key is required"
 
 
-def test_invalid_api_key_returns_401(client):
-    """
-    Verify invalid API keys are rejected.
-    """
+@patch("app.dependencies.auth.validate_api_key")
+@patch("app.dependencies.auth.get_platform_engine")
+def test_invalid_api_key_returns_401(
+    mock_engine,
+    mock_validate,
+    client,
+):
+    mock_validate.return_value = None
+
+    mock_connection = Mock()
+    mock_engine.return_value.connect.return_value.__enter__.return_value = (
+        mock_connection
+    )
 
     response = client.get(
         "/api/v1/products/37/recommendations",

@@ -18,7 +18,6 @@ def get_current_client(
     AUTH_REQUESTS_TOTAL.inc()
 
     if not x_api_key:
-        
         AUTH_MISSING_API_KEY_TOTAL.inc()
 
         raise HTTPException(

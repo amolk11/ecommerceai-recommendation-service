@@ -88,7 +88,10 @@ jobs:
 
       - name: Run Tests
         run: |
-          pytest tests/api/test_auth.py::test_invalid_api_key_returns_401 -vv -s
+          python -m pytest \
+            --cov=app \
+            --cov-report=term-missing \
+            --cov-fail-under=80
 
   docker-build:
     name: Docker Build Validation
