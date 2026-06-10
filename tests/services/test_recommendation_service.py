@@ -151,9 +151,14 @@ def test_build_cache_key():
     assert key == "recommendations:35:10"
 
 
+class ErrorRepository:
+    def get_product_recommendations(self, product_id):
+        raise RecommendationRepositoryError("Database connection failed")
+
+
 def test_repository_error_is_raised():
 
-    service = RecommendationService(repository=FailingRepository(), cache=MockCache())
+    service = RecommendationService(repository=ErrorRepository(), cache=MockCache())
 
     with pytest.raises(RecommendationRepositoryError):
         service.get_product_recommendations(product_id=100, limit=10)

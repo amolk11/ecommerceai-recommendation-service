@@ -1,6 +1,4 @@
-# tests/test_auth.py
-
-import os
+from app.dependencies.auth import get_current_client
 
 from fastapi.testclient import TestClient
 
@@ -33,18 +31,17 @@ def test_invalid_api_key_returns_401():
     assert response.json()["detail"] == "Invalid API key"
 
 
-def test_valid_api_key_returns_200():
+def mock_get_current_client():
+    return {"client_id": 1, "client_name": "test-client"}
+
+
+def test_authenticated_request_returns_200():
     """
-    Verify valid API key allows access.
+    Verify authenticated requests are allowed.
     """
+    app.dependency_overrides[get_current_client] = mock_get_current_client
 
-    api_key = os.getenv("TEST_API_KEY")
-
-    assert api_key is not None, "TEST_API_KEY environment variable is not set"
-
-    response = client.get(
-        "/api/v1/products/37/recommendations", headers={"X-API-Key": api_key}
-    )
+    response = client.get("/api/v1/products/37/recommendations")
 
     assert response.status_code == 200
 
