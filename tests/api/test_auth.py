@@ -12,8 +12,8 @@ def test_missing_api_key_returns_401(client):
     assert response.json()["detail"] == "API key is required"
 
 
-@patch("app.dependencies.auth.validate_api_key")
-@patch("app.dependencies.auth.get_platform_engine")
+@patch("app.dependencies.auth.validate_client_api_key")
+@patch("app.dependencies.auth.get_auth_engine")
 def test_invalid_api_key_returns_401(
     mock_engine,
     mock_validate,

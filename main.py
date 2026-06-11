@@ -9,11 +9,13 @@ from app.core.config import settings
 from app.core.logger import get_logger
 from app.exceptions.handlers import recommendation_repository_exception_handler
 from app.exceptions.repository import RecommendationRepositoryError
-from app.core.startup import validate_database_connection, validate_redis_connection
+from app.core.startup import (
+    validate_database_connection,
+    validate_platform_connection,
+    validate_redis_connection,
+)
 from app.middleware.request_timing import request_timing_middleware
 from app.middleware.request_id import request_id_middleware
-
-from platform_core.validation import validate_platform_infrastructure
 
 
 logger = get_logger(log_name="startup", log_folder="system")
@@ -25,15 +27,15 @@ async def lifespan(app: FastAPI):
     logger.info("Starting recommendation service")
 
     try:
-        if settings.environment == "test":
-            logger.info("Skipping infrastructure validation in test environment")
+        if not settings.should_validate_infrastructure:
+            logger.info("Skipping infrastructure validation")
         else:
             validate_database_connection()
             validate_redis_connection()
-            validate_platform_infrastructure()
+            validate_platform_connection()
 
     except Exception:
-        logger.exception("Database connection failed")
+        logger.exception("Infrastructure validation failed")
         raise
 
     yield

@@ -2,20 +2,30 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str
-    app_version: str
-    environment: str
+    app_name: str = "ecommerceai-recommendation-service"
+    app_version: str = "0.1.0"
+    environment: str = "local"
 
-    db_url: str
+    db_url: str | None = None
 
-    redis_host: str
-    redis_port: int
-    cache_ttl: int
+    redis_host: str = "localhost"
+    redis_port: int = 6379
+    cache_ttl: int = 3600
+
+    startup_validation_enabled: bool = True
 
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore",
     )
+
+    @property
+    def is_test(self) -> bool:
+        return self.environment.lower() == "test"
+
+    @property
+    def should_validate_infrastructure(self) -> bool:
+        return self.startup_validation_enabled and not self.is_test
 
 
 settings = Settings()

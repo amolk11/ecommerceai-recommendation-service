@@ -11,10 +11,17 @@ from app.metrics.metrics import (
 )
 
 
+def get_auth_engine():
+    return get_platform_engine()
+
+
+def validate_client_api_key(connection, api_key: str):
+    return validate_api_key(connection=connection, api_key=api_key)
+
+
 def get_current_client(
     x_api_key: str | None = Header(default=None, alias="X-API-Key"),
 ) -> dict:
-    print(f"HEADER RECEIVED: {repr(x_api_key)}")
     AUTH_REQUESTS_TOTAL.inc()
 
     if not x_api_key:
@@ -24,12 +31,10 @@ def get_current_client(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="API key is required"
         )
 
-    engine = get_platform_engine()
+    engine = get_auth_engine()
 
     with engine.connect() as connection:
-        print("VALIDATING API KEY...")
-        client = validate_api_key(connection=connection, api_key=x_api_key)
-        print(f"CLIENT RESULT: {client}")
+        client = validate_client_api_key(connection=connection, api_key=x_api_key)
 
     if client is None:
         AUTH_INVALID_API_KEY_TOTAL.inc()

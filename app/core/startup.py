@@ -29,3 +29,15 @@ def validate_redis_connection() -> None:
         raise RuntimeError("Redis connection failed")
 
     logger.info("Redis connection successful")
+
+
+def validate_platform_connection() -> None:
+    """
+    Validate Platform Core infrastructure during application startup.
+    """
+
+    from platform_core.validation import validate_platform_infrastructure
+
+    validate_platform_infrastructure()
+
+    logger.info("Platform Core infrastructure validation successful")

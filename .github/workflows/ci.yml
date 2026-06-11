@@ -58,15 +58,14 @@ jobs:
       APP_NAME: ecommerceai-recommendation-service
       APP_VERSION: 0.1.0
       ENVIRONMENT: test
+      STARTUP_VALIDATION_ENABLED: "false"
 
-      DB_URL: ${{ secrets.DB_URL }}
-      PLATFORM_DB_URL: ${{ secrets.PLATFORM_DB_URL }}
+      DB_URL: postgresql+psycopg://unit:unit@localhost:5432/unit
+      PLATFORM_DB_URL: postgresql+psycopg://unit:unit@localhost:5432/platform
 
       REDIS_HOST: localhost
       REDIS_PORT: 6379
       CACHE_TTL: 3600
-
-      TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
 
     steps:
       - name: Checkout Repository
@@ -86,9 +85,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
-      - name: Run Tests
+      - name: Run Unit Tests
         run: |
           python -m pytest \
+            -m "unit" \
             --cov=app \
             --cov-report=term-missing \
             --cov-fail-under=80
@@ -119,6 +119,7 @@ jobs:
             -e APP_NAME=ecommerceai-recommendation-service \
             -e APP_VERSION=0.1.0 \
             -e ENVIRONMENT=test \
+            -e STARTUP_VALIDATION_ENABLED=false \
             -e DB_URL=postgresql+psycopg://user:password@localhost:5432/testdb \
             -e REDIS_HOST=localhost \
             -e REDIS_PORT=6379 \

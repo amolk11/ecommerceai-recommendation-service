@@ -1,12 +1,27 @@
+import os
+import socket
+
 import pytest
 
 from fastapi.testclient import TestClient
 
-from main import app
+os.environ["APP_NAME"] = "ecommerceai-recommendation-service"
+os.environ["APP_VERSION"] = "0.1.0"
+os.environ["ENVIRONMENT"] = "test"
+os.environ["STARTUP_VALIDATION_ENABLED"] = "false"
+os.environ.setdefault("DB_URL", "postgresql+psycopg://unit:unit@localhost:5432/unit")
+os.environ.setdefault(
+    "PLATFORM_DB_URL", "postgresql+psycopg://unit:unit@localhost:5432/platform"
+)
+os.environ.setdefault("REDIS_HOST", "localhost")
+os.environ.setdefault("REDIS_PORT", "6379")
+os.environ.setdefault("CACHE_TTL", "3600")
 
-from app.dependencies.recommendation import get_recommendation_service
-from app.dependencies.auth import get_current_client
-from app.services.recommendation_service import RecommendationService
+from main import app  # noqa: E402
+
+from app.dependencies.recommendation import get_recommendation_service  # noqa: E402
+from app.dependencies.auth import get_current_client  # noqa: E402
+from app.services.recommendation_service import RecommendationService  # noqa: E402
 
 
 class MockRecommendationRepository:
@@ -43,6 +58,50 @@ def override_recommendation_service():
 
 def override_get_current_client():
     return {"client_id": 1, "client_name": "test-client", "is_active": True}
+
+
+def pytest_collection_modifyitems(items):
+    for item in items:
+        if not any(
+            item.get_closest_marker(marker) for marker in ("unit", "integration", "e2e")
+        ):
+            item.add_marker(pytest.mark.unit)
+
+
+@pytest.fixture(autouse=True)
+def block_network_for_unit_tests(monkeypatch, request):
+    if request.node.get_closest_marker(
+        "integration"
+    ) or request.node.get_closest_marker("e2e"):
+        return
+
+    original_connect = socket.socket.connect
+    original_connect_ex = socket.socket.connect_ex
+
+    def is_allowed_testclient_socket(address):
+        if not isinstance(address, tuple) or len(address) < 2:
+            return False
+
+        host, port = address[0], address[1]
+        return host in {"127.0.0.1", "::1", "localhost"} and port not in {
+            5432,
+            6379,
+        }
+
+    def guarded_connect(sock, address):
+        if is_allowed_testclient_socket(address):
+            return original_connect(sock, address)
+
+        raise AssertionError(f"Unit tests must not open network connections: {address}")
+
+    def guarded_connect_ex(sock, address):
+        if is_allowed_testclient_socket(address):
+            return original_connect_ex(sock, address)
+
+        raise AssertionError(f"Unit tests must not open network connections: {address}")
+
+    monkeypatch.setattr(socket.socket, "connect", guarded_connect)
+    monkeypatch.setattr(socket.socket, "connect_ex", guarded_connect_ex)
 
 
 @pytest.fixture
