@@ -13,9 +13,7 @@ from app.core.startup import (
 def test_validate_database_connection_success(mock_get_engine):
     mock_conn = MagicMock()
 
-    mock_get_engine.return_value.connect.return_value.__enter__.return_value = (
-        mock_conn
-    )
+    mock_get_engine.return_value.connect.return_value.__enter__.return_value = mock_conn
 
     validate_database_connection()
 
@@ -54,4 +52,3 @@ def test_validate_platform_connection_failure(mock_validate):
 
     with pytest.raises(RuntimeError, match="Platform validation failed"):
         validate_platform_connection()
-        
