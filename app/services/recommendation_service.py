@@ -40,17 +40,22 @@ class RecommendationService:
 
             cache_key = self._build_cache_key(product_id=product_id, limit=limit)
 
-            cached_response = self.cache.get(cache_key)
+            cached_response = None
 
-            if cached_response:
-                logger.info(f"Cache hit for key={cache_key}")
-                CACHE_HITS.inc()
+            if settings.cache_enabled:
+                logger.info(f"Cache enabled={settings.cache_enabled}")
 
-                logger.info(
-                    f"Serving recommendations from Redis cache for product_id={product_id}"
-                )
+                cached_response = self.cache.get(cache_key)
 
-                return RecommendationResponse(**json.loads(cached_response))
+                if cached_response:
+                    logger.info(f"Cache hit for key={cache_key}")
+                    CACHE_HITS.inc()
+
+                    logger.info(
+                        f"Serving recommendations from Redis cache for product_id={product_id}"
+                    )
+
+                    return RecommendationResponse(**json.loads(cached_response))
 
             logger.info(f"Cache miss for key={cache_key}")
             CACHE_MISSES.inc()
@@ -81,11 +86,12 @@ class RecommendationService:
                 recommendations=recommendation_objects,
             )
 
-            self.cache.set(
-                key=cache_key,
-                value=json.dumps(response.model_dump()),
-                ttl=settings.cache_ttl,
-            )
+            if settings.cache_enabled:
+                self.cache.set(
+                    key=cache_key,
+                    value=json.dumps(response.model_dump()),
+                    ttl=settings.cache_ttl,
+                )
 
             logger.info(
                 f"Returning {len(recommendation_objects)} recommendations for product_id={product_id} (requested_limit={limit})"

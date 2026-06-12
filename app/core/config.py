@@ -8,6 +8,8 @@ class Settings(BaseSettings):
 
     db_url: str | None = None
 
+    cache_enabled: bool = True
+
     redis_host: str = "localhost"
     redis_port: int = 6379
     cache_ttl: int = 3600
