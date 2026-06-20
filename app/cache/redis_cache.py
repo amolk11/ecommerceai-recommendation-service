@@ -40,3 +40,13 @@ class RedisCache(CacheManager):
         except redis.RedisError:
             logger.exception("Redis ping failed")
             return False
+
+    def delete(self, key):
+        try:
+            self.client.delete(key)
+        except redis.RedisError:
+            logger.exception(
+                "Redis DELETE failed for key=%s",
+                key,
+            )
+            

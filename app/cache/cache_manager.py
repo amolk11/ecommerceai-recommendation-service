@@ -13,3 +13,8 @@ class CacheManager(ABC):
     @abstractmethod
     def set(self, key: str, value, ttl: int):
         pass
+    
+    @abstractmethod
+    def delete(self, key: str):
+        pass
+    
